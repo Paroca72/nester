@@ -1,5 +1,6 @@
-Flutter library to automatically convert a list of widgets in a nested group.
+## nester
 
+Flutter library to automatically convert a list of widgets in a nested group.
 This is just different way to view the code "in list" instead the default "nested" widgets pattern.
 
 ## Features
