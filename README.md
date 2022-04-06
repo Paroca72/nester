@@ -5,7 +5,7 @@ This is just different way to view the code "in list" instead the default "neste
 
 ## Features
 
-- Easing the code reading
+- Ease the code reading
 
 ## Installation
 
