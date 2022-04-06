@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
               child: next,
             ),
         (next) => Center(child: next),
-        (next) => Column(
+        (_) => Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const <Widget>[Text("Just a text")],
             ),
