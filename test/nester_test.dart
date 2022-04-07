@@ -8,7 +8,7 @@ void main() {
     bool ok = false;
     try {
       // Empty children
-      const Nester(children: []);
+      const Nester([]);
 
       ok = true;
     } on Exception {
@@ -18,10 +18,10 @@ void main() {
     expect(ok, true);
   });
 
-  test('empty values', () {
+  test('Widgets list', () {
     bool ok = false;
     try {
-      Nester(children: [
+      Nester([
         (next) => MaterialApp(
               title: 'Nester library',
               home: next,

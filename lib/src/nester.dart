@@ -1,17 +1,18 @@
 import 'package:flutter/widgets.dart';
 
-
 /// Flutter library that automatically convert a list of widgets in a nested
 /// group.
 ///
 /// The only purpose of this library is to make the code more readable.
-/// Since will be doing using a cycle care about costs and benefits when you
-/// need maximum performance.
+/// Since will using a cycle care about costs and benefits when you need to
+/// have top performance.
 class Nester extends StatelessWidget {
-  // Just need the list  of the widgets as children
-  final List<Widget Function(Widget)> children;
+  /// Just need the list  of the widgets as children
+  final List<Function(Widget)> children;
 
-  const Nester({Key? key, required this.children}) : super(key: key);
+  /// Force to use a list of widgets
+  const Nester(this.children, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

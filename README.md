@@ -1,6 +1,6 @@
-## nester
+# nester
 
-Flutter library to automatically convert a list of widgets in a nested group.
+Flutter library to automatically convert a list of widgets in a nested group of widget.
 This is just different way to view the code "in list" instead the default "nested" widgets pattern.
 
 ## Features
@@ -13,7 +13,7 @@ This is just different way to view the code "in list" instead the default "neste
 
 ```
 dependencies:
-  nester: ^0.0.1
+  nester: ^0.0.2
 ```
 
 - Import the package
@@ -55,7 +55,7 @@ return MaterialApp(
 
 ```dart
 return Nester(
-      children: [
+    [
         (next) => MaterialApp(
               title: 'Flutter Demo',
               theme: ThemeData(primarySwatch: Colors.blue),
@@ -78,6 +78,6 @@ return Nester(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const <Widget>[Text("Just a text")],
             ),
-      ],
-    );
+  ]
+);
 ```
