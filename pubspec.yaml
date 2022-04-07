@@ -1,6 +1,6 @@
 name: nester
-description: A library to make the code more readable
-version: 0.0.2
+description: Flutter library to automatically convert a list of widgets in a nested group of widget.
+version: 0.0.3
 homepage: https://github.com/Paroca72/nester
 
 environment:

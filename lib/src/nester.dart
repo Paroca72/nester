@@ -11,19 +11,18 @@ class Nester extends StatelessWidget {
   final List<Function(Widget)> children;
 
   /// Force to use a list of widgets
-  const Nester(this.children, {Key? key})
-      : super(key: key);
+  const Nester(this.children, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // The list will be reversed to able to pass the current widget to the
-    // previous one.
+    /// The list will be reversed to able to pass the current widget to the
+    /// previous one.
     Widget next = Container();
     for (var element in children.reversed) {
       next = element(next);
     }
 
-    // The next widget will be never null
+    /// The next widget will be never null
     return next;
   }
 }

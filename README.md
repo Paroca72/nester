@@ -13,7 +13,7 @@ This is just different way to view the code "in list" instead the default "neste
 
 ```
 dependencies:
-  nester: ^0.0.2
+  nester: ^0.0.3
 ```
 
 - Import the package
@@ -48,7 +48,7 @@ return MaterialApp(
             ),
           ),
         ),
-      ),
+      );
 ```
 
 #### **Using Nester**
