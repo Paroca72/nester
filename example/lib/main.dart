@@ -11,35 +11,29 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Nester(
-      [
-        (next) => MaterialApp(
-              title: 'Flutter Demo',
-              theme: ThemeData(
-                primarySwatch: Colors.blue,
-              ),
-              home: next,
-            ),
-        (next) => Scaffold(
-              appBar: AppBar(
-                title: const Text("Example"),
-              ),
-              body: next,
-            ),
-        (next) => Padding(
-              padding: const EdgeInsets.all(20),
-              child: next,
-            ),
-        (next) => Container(
-              color: Colors.black12,
-              child: next,
-            ),
-        (next) => Center(child: next),
-        (_) => Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[Text("Just a text")],
-            ),
-      ],
-    );
+    return Nester.queue([
+      (next) => MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(primarySwatch: Colors.blue),
+            home: next(),
+          ),
+      (next) => Scaffold(
+            appBar: next() as PreferredSizeWidget,
+            body: next(),
+          ),
+      (_) => AppBar(title: const Text("Example")),
+      (next) => Padding(
+            padding: const EdgeInsets.all(50),
+            child: next(),
+          ),
+      (next) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [ next(), next(), next() ],
+          ),
+      (_) => const Text("Left", textAlign: TextAlign.left),
+      (_) => const Text("Center", textAlign: TextAlign.center),
+      (_) => const Text("Right", textAlign: TextAlign.right),
+    ]);
+
   }
 }

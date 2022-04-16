@@ -6,6 +6,8 @@ This is just different way to view the code "in list" instead the default "neste
 ## Features
 
 - Ease the code reading
+- Can manage as generic list
+- Can manage as a queue
 
 ## Installation
 
@@ -13,7 +15,7 @@ This is just different way to view the code "in list" instead the default "neste
 
 ```
 dependencies:
-  nester: ^0.0.3
+  nester: ^0.0.4
 ```
 
 - Import the package
@@ -24,10 +26,16 @@ import 'package:nester/nester.dart';
 
 ## Example Usage
 
-#### **Original code**
+#### NESTER LIST
+Will treat the as simple list. You are allowed to have just one **"next"**
+reference for each item in the list.
+This is the most simple and way to use **Nester**.
+Recommended when you have mostly "one child" Widget inside your list.
 
+
+###### Original code
 ```dart
-return MaterialApp(
+   return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -51,11 +59,9 @@ return MaterialApp(
       );
 ```
 
-#### **Using Nester**
-
+###### Using Nester
 ```dart
-return Nester(
-    [
+   return Nester.list([
         (next) => MaterialApp(
               title: 'Flutter Demo',
               theme: ThemeData(primarySwatch: Colors.blue),
@@ -78,6 +84,62 @@ return Nester(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const <Widget>[Text("Just a text")],
             ),
-  ]
-);
+  ]);
+```
+
+#### NESTER QUEUE
+The Widget list will be treated like a queue.
+Every **"next"** calling will consume the next item in the list.
+This is very useful when you are using "multi-child" Widget inside
+your list.
+
+###### Original code
+```dart
+   return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Example"),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(50),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: const [
+              Text("Left", textAlign: TextAlign.left),
+              Text("Center", textAlign: TextAlign.center),
+              Text("Right", textAlign: TextAlign.right),
+            ],
+          ),
+        ),
+      ),
+    );
+```
+
+###### Using Nester
+```dart
+    return Nester.queue([
+      (next) => MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(primarySwatch: Colors.blue),
+            home: next(),
+          ),
+      (next) => Scaffold(
+            appBar: next() as PreferredSizeWidget,
+            body: next(),
+          ),
+      (_) => AppBar(title: const Text("Example")),
+      (next) => Padding(
+            padding: const EdgeInsets.all(50),
+            child: next(),
+          ),
+      (next) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [ next(), next(), next() ],
+          ),
+      (_) => const Text("Left", textAlign: TextAlign.left),
+      (_) => const Text("Center", textAlign: TextAlign.center),
+      (_) => const Text("Right", textAlign: TextAlign.right),
+    ]);
 ```
