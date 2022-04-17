@@ -1,3 +1,8 @@
+## 0.0.6
+
+* Code formatting
+* Review comments and documentation
+* 
 ## 0.0.5
 
 * Improved "next" function

@@ -34,6 +34,5 @@ class MyApp extends StatelessWidget {
       (_) => const Text("Center", textAlign: TextAlign.center),
       (_) => const Text("Right", textAlign: TextAlign.right),
     ]);
-
   }
 }

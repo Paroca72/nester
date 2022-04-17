@@ -30,7 +30,8 @@ class Nester extends StatelessWidget {
   /// Manage the widgets list like a queue.
   /// Each time will be called the passed function will be consumed a child
   /// inside the queue.
-  Nester.queue(List<Widget Function(Function({int skip, int take}))> children, {Key? key})
+  Nester.queue(List<Widget Function(Function({int skip, int take}))> children,
+      {Key? key})
       : type = _NesterTypes.queue,
         children = children.toList(),
         super(key: key);
@@ -41,7 +42,8 @@ class Nester extends StatelessWidget {
       case _NesterTypes.list:
         return _List(children as List<Widget Function(Widget)>).elaborate();
       case _NesterTypes.queue:
-        return _Queue(children as List<Widget Function(Function({int skip, int take}))>)
+        return _Queue(children
+                as List<Widget Function(Function({int skip, int take}))>)
             .elaborate();
     }
   }
@@ -94,14 +96,14 @@ class _Queue {
   /// The current position in list
   int _currentIndex = 0;
 
-  /// Make the calling to the current function in the list
+  /// Make the calling to the next function in the list
   _makeCalling() {
     // Check the bounds
     if (_currentIndex >= children.length) {
       throw Exception("Index out of bounds");
     }
 
-    // Call the current function
+    // Call the next function
     return children[++_currentIndex](_next);
   }
 

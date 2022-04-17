@@ -15,7 +15,7 @@ A beautifier plugin to easing your code syntax.
 
 ```
 dependencies:
-  nester: ^0.0.5
+  nester: ^0.0.6
 ```
 
 - Import the package
@@ -27,10 +27,10 @@ import 'package:nester/nester.dart';
 ## Example Usage
 
 #### NESTER LIST
-Will treat the as simple list. You are allowed to have just one **"next"**
+Will treated the as simple list. You are allowed to have just one **"next"**
 reference for each item in the list.
-This is the most simple and way to use **Nester**.
-Recommended when you have mostly "one child" Widget inside your list.
+This is the most simple way to use **Nester**.
+Recommended when you mostly have "one child" Widget inside your list.
 
 
 ###### Original code
@@ -90,8 +90,7 @@ Recommended when you have mostly "one child" Widget inside your list.
 #### NESTER QUEUE
 The Widget list will be treated like a queue.
 Every **"next"** calling will consume the next item in the list.
-This is very useful when you are using "multi-child" Widget inside
-your list.
+This is useful when you using "multi-child" Widgets inside your list.
 
 ###### Original code
 ```dart
@@ -145,11 +144,11 @@ your list.
 ```
 
 The `next({int skip, int take})` accept two parameters.
-* Param `skip` will skip n calling on the queue list. Note that the
+* Param `skip` will skip n calls on the queue list. Note that the
 function wil NOT check for nested calling, just skip the next n items
 inside the list.
-* Param `take` will consuming n item on the same level. If a item have a
+* Param `take` will consuming n items on the same level. If a item have a
 nested calling will not count as consumed. The result will be an array of
-Widget.
+Widgets.
 
 **NOTE** that `skip` param will be applied before `take`.
