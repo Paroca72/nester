@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Improved "next" function
+
 ## 0.0.4
 
 * Deprecated old constructor

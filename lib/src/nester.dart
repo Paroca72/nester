@@ -30,7 +30,7 @@ class Nester extends StatelessWidget {
   /// Manage the widgets list like a queue.
   /// Each time will be called the passed function will be consumed a child
   /// inside the queue.
-  Nester.queue(List<Widget Function(Widget Function())> children, {Key? key})
+  Nester.queue(List<Widget Function(Function({int skip, int take}))> children, {Key? key})
       : type = _NesterTypes.queue,
         children = children.toList(),
         super(key: key);
@@ -41,7 +41,7 @@ class Nester extends StatelessWidget {
       case _NesterTypes.list:
         return _List(children as List<Widget Function(Widget)>).elaborate();
       case _NesterTypes.queue:
-        return _Queue(children as List<Function(Widget Function())>)
+        return _Queue(children as List<Widget Function(Function({int skip, int take}))>)
             .elaborate();
     }
   }
@@ -86,23 +86,55 @@ class _List {
 /// starting from the last.
 class _Queue {
   /// The original children list
-  final List<Function(Widget Function())> children;
+  final List<Widget Function(Function({int skip, int take}))> children;
 
   /// Requested fields
   _Queue(this.children);
 
   /// The current position in list
-  int currentIndex = 0;
+  int _currentIndex = 0;
 
-  /// This will call the next Widget in the tree
-  Widget _next() {
+  /// Make the calling to the current function in the list
+  _makeCalling() {
     // Check the bounds
-    if (currentIndex > children.length) {
+    if (_currentIndex >= children.length) {
       throw Exception("Index out of bounds");
     }
 
-    // Get the next Widget in queue
-    return children[++currentIndex](_next);
+    // Call the current function
+    return children[++_currentIndex](_next);
+  }
+
+  /// This will call the next Widget in the tree
+  ///
+  /// Param [skip] will skip n calling on the queue list. Note that the
+  /// function wil NOT check for nested calling, just skip the next n items
+  /// inside the list.
+  ///
+  /// Param [take] will consuming n item on the same level. If a item have a
+  /// nested calling will not count as consumed. The result will be an array of
+  /// Widget.
+  ///
+  /// NOTE that [skip] param will be applied before [take].
+  _next({int skip = 0, int take = 1}) {
+    // Limit the params
+    if (skip < 0) skip = 0;
+    if (take < 1) take = 1;
+
+    // Apply skip
+    _currentIndex += skip;
+
+    // Single case result
+    if (take == 1) {
+      return _makeCalling();
+    }
+
+    // Multi case result
+    List result = [];
+    for (int index = 0; index < take; index++) {
+      result.add(_makeCalling());
+    }
+    return result.cast<Widget>();
   }
 
   /// Elaborate the list
@@ -115,6 +147,6 @@ class _Queue {
     // Call the first function in the list.
     // Than should be work in cascade as inside the function we expect
     // will be called the "_next" function recursively for each branch.
-    return (children[currentIndex])(_next);
+    return children[_currentIndex](_next);
   }
 }

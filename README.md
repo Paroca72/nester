@@ -1,13 +1,13 @@
 # nester
 
-Flutter library to automatically convert a list of widgets in a nested group of widget.
-This is just different way to view the code "in list" instead the default "nested" widgets pattern.
+Flutter library to convert a list of widgets in a nested group of widgets.  
+A beautifier plugin to easing your code syntax.
 
 ## Features
 
-- Ease the code reading
-- Can manage as generic list
-- Can manage as a queue
+- Ease the code syntax
+- Can manage like a generic list
+- Can manage like a queue
 
 ## Installation
 
@@ -15,7 +15,7 @@ This is just different way to view the code "in list" instead the default "neste
 
 ```
 dependencies:
-  nester: ^0.0.4
+  nester: ^0.0.5
 ```
 
 - Import the package
@@ -136,10 +136,20 @@ your list.
           ),
       (next) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [ next(), next(), next() ],
+            children: next(take: 3), // or [ next(), next(), next() ],
           ),
       (_) => const Text("Left", textAlign: TextAlign.left),
       (_) => const Text("Center", textAlign: TextAlign.center),
       (_) => const Text("Right", textAlign: TextAlign.right),
     ]);
 ```
+
+The `next({int skip, int take})` accept two parameters.
+* Param `skip` will skip n calling on the queue list. Note that the
+function wil NOT check for nested calling, just skip the next n items
+inside the list.
+* Param `take` will consuming n item on the same level. If a item have a
+nested calling will not count as consumed. The result will be an array of
+Widget.
+
+**NOTE** that `skip` param will be applied before `take`.
