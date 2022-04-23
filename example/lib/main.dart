@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
           ),
       (next) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: next(take: 3),
+            children: next(take: 3), // or [ next(), next(), next() ],
           ),
       (_) => const Text("Left", textAlign: TextAlign.left),
       (_) => const Text("Center", textAlign: TextAlign.center),

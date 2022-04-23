@@ -1,3 +1,7 @@
+## 0.0.7
+
+* Return a single Widget only if `take` param is null else return an array of Widgets.
+
 ## 0.0.6
 
 * Code formatting

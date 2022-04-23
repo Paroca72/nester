@@ -30,7 +30,7 @@ class Nester extends StatelessWidget {
   /// Manage the widgets list like a queue.
   /// Each time will be called the passed function will be consumed a child
   /// inside the queue.
-  Nester.queue(List<Widget Function(Function({int skip, int take}))> children,
+  Nester.queue(List<Widget Function(Function({int? skip, int? take}))> children,
       {Key? key})
       : type = _NesterTypes.queue,
         children = children.toList(),
@@ -43,7 +43,7 @@ class Nester extends StatelessWidget {
         return _List(children as List<Widget Function(Widget)>).elaborate();
       case _NesterTypes.queue:
         return _Queue(children
-                as List<Widget Function(Function({int skip, int take}))>)
+                as List<Widget Function(Function({int? skip, int? take}))>)
             .elaborate();
     }
   }
@@ -88,7 +88,7 @@ class _List {
 /// starting from the last.
 class _Queue {
   /// The original children list
-  final List<Widget Function(Function({int skip, int take}))> children;
+  final List<Widget Function(Function({int? skip, int? take}))> children;
 
   /// Requested fields
   _Queue(this.children);
@@ -98,12 +98,6 @@ class _Queue {
 
   /// Make the calling to the next function in the list
   _makeCalling() {
-    // Check the bounds
-    if (_currentIndex >= children.length) {
-      throw Exception("Index out of bounds");
-    }
-
-    // Call the next function
     return children[++_currentIndex](_next);
   }
 
@@ -118,16 +112,12 @@ class _Queue {
   /// Widget.
   ///
   /// NOTE that [skip] param will be applied before [take].
-  _next({int skip = 0, int take = 1}) {
-    // Limit the params
-    if (skip < 0) skip = 0;
-    if (take < 1) take = 1;
-
+  _next({int? skip, int? take}) {
     // Apply skip
-    _currentIndex += skip;
+    _currentIndex += skip == null || skip < 0 ? 0 : skip;
 
     // Single case result
-    if (take == 1) {
+    if (take == null) {
       return _makeCalling();
     }
 

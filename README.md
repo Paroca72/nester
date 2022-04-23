@@ -15,7 +15,7 @@ A beautifier plugin to easing your code syntax.
 
 ```
 dependencies:
-  nester: ^0.0.6
+  nester: ^0.0.7
 ```
 
 - Import the package
