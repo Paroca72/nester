@@ -1,6 +1,7 @@
 # nester
 
-Flutter library to convert a list of widgets in a nested group of widgets.  
+Flutter library to convert a list of widgets in a nested group of
+widgets.  
 A beautifier plugin to easing your code syntax.
 
 ## Features
@@ -9,13 +10,14 @@ A beautifier plugin to easing your code syntax.
 - Can manage like a generic list
 - Can manage like a queue
 
+
 ## Installation
 
 - Add the dependency
 
 ```
 dependencies:
-  nester: ^0.0.7
+  nester: ^1.0.0
 ```
 
 - Import the package
@@ -27,7 +29,8 @@ import 'package:nester/nester.dart';
 ## Example Usage
 
 #### NESTER LIST
-Will treated the as simple list. You are allowed to have just one **"next"**
+Will treated the as simple list. You are allowed to have just one
+**"next"**
 reference for each item in the list.
 This is the most simple way to use **Nester**.
 Recommended when you mostly have "one child" Widget inside your list.
@@ -87,10 +90,16 @@ Recommended when you mostly have "one child" Widget inside your list.
   ]);
 ```
 
+**NOTE:** The last `next` item in list will be always an empty
+`Container` object. So is useless to pass it.
+
+---
+
 #### NESTER QUEUE
 The Widget list will be treated like a queue.
 Every **"next"** calling will consume the next item in the list.
 This is useful when you using "multi-child" Widgets inside your list.
+
 
 ###### Original code
 ```dart
@@ -143,12 +152,63 @@ This is useful when you using "multi-child" Widgets inside your list.
     ]);
 ```
 
-The `next({int skip, int take})` accept two parameters.
+The `next({int skip, int take})` function accept two parameters.
 * Param `skip` will skip n calls on the queue list. Note that the
 function wil NOT check for nested calling, just skip the next n items
-inside the list.
+inside the list. `skip` will be always applied before `take`.
 * Param `take` will consuming n items on the same level. If a item have a
 nested calling will not count as consumed. The result will be an array of
 Widgets.
 
-**NOTE** that `skip` param will be applied before `take`.
+
+The `queue` constructor accept `throwRangeException` (default:
+`false`) to avoid the RangeError check.
+If `true` every calling of `next` then exceed the list boundaries will
+throw a `RangeError` exception.
+
+When use `take` param in the `next` call the resulting array will
+not exceed the number of remaining items in list.
+When NOT use `take` and the `next` calling exceed the list bounds an
+empty `Container` will be returned.
+
+---
+
+##### Deep in queue mode
+
+Using of `skip` and `take` parameters could create confusion so
+write some examples to explain better them behavior.
+
+Suppose the have a variable `trigger` boolean to use to skip some items
+inside a `Column` widget.
+
+```dart
+    return Nester.queue([
+      ...,
+     (next) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: []
+              ..addAll(next(skip: trigger ? 0: 2, take: trigger ? 1: 0))
+              ..add(next()),
+              ..add(next()),
+            ]),
+      (next) => Padding(..., child: next()),
+      (_) => const Text("If trigger true"),
+      (_) => const Text("Always show"),
+      (_) => const Text("Always show"),
+    ]);
+```
+
+If `trigger` is true `skip` 0 and `take` 1.  
+If `trigger` is false `skip` 2 and `take` 0.
+
+**Why skip = 2?**  
+Because skip will not go inside the tree to check the nested items.
+Just skip the items on the raw list.
+So need to skip the next `Padding` and `Text` (*two items*).  
+Instead `take` will consume all the item inside the tree. Take 1 it
+mean consuming the next `Padding` then will consume the next `Text`
+(*two items*).
+
+**Why addAll?**  
+Because when you use `take` parameter the result will be always an
+Array of Widgets, even if the taking is 0 or 1.

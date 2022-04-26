@@ -13,26 +13,26 @@ class Nester extends StatelessWidget {
   /// Define the management type of the children
   final _NesterTypes type;
 
-  /// Force to use a list of widgets
-  @Deprecated(
-      "Will be removed in the next versions. Use 'Nester.list' instead.")
-  Nester(List<Widget Function(Widget)> children, {Key? key})
-      : type = _NesterTypes.list,
-        children = children.toList(),
-        super(key: key);
+  /// Only for Queue mode define if throw ErrorRange exception
+  final bool throwRangeException;
 
   /// Force to use a list of widgets
-  Nester.list(List<Widget Function(Widget)> children, {Key? key})
-      : type = _NesterTypes.list,
+  Nester.list(
+    List<Widget Function(Widget)> children, {
+    Key? key,
+    this.throwRangeException = false,
+  })  : type = _NesterTypes.list,
         children = children.toList(),
         super(key: key);
 
   /// Manage the widgets list like a queue.
   /// Each time will be called the passed function will be consumed a child
   /// inside the queue.
-  Nester.queue(List<Widget Function(Function({int? skip, int? take}))> children,
-      {Key? key})
-      : type = _NesterTypes.queue,
+  Nester.queue(
+    List<Widget Function(Function({int? skip, int? take}))> children, {
+    Key? key,
+    this.throwRangeException = false,
+  })  : type = _NesterTypes.queue,
         children = children.toList(),
         super(key: key);
 
@@ -42,9 +42,10 @@ class Nester extends StatelessWidget {
       case _NesterTypes.list:
         return _List(children as List<Widget Function(Widget)>).elaborate();
       case _NesterTypes.queue:
-        return _Queue(children
-                as List<Widget Function(Function({int? skip, int? take}))>)
-            .elaborate();
+        return _Queue(
+          children as List<Widget Function(Function({int? skip, int? take}))>,
+          throwRangeException,
+        ).elaborate();
     }
   }
 }
@@ -90,15 +91,24 @@ class _Queue {
   /// The original children list
   final List<Widget Function(Function({int? skip, int? take}))> children;
 
+  /// Define if need to throw ErrorRange exception
+  final bool throwRangeException;
+
   /// Requested fields
-  _Queue(this.children);
+  _Queue(this.children, this.throwRangeException);
 
   /// The current position in list
   int _currentIndex = 0;
 
   /// Make the calling to the next function in the list
   _makeCalling() {
-    return children[++_currentIndex](_next);
+    // If over the bounds return an empty Container
+    if (!throwRangeException && _currentIndex > children.length - 1) {
+      return Container();
+    }
+
+    // Call the next item in list
+    return children[_currentIndex](_next);
   }
 
   /// This will call the next Widget in the tree
@@ -118,27 +128,31 @@ class _Queue {
 
     // Single case result
     if (take == null) {
+      // Increment before calling
+      _currentIndex++;
       return _makeCalling();
     }
 
     // Multi case result
     List result = [];
     for (int index = 0; index < take; index++) {
-      result.add(_makeCalling());
+      // Increment before calling
+      _currentIndex++;
+
+      // Avoid range error if required
+      if (throwRangeException || _currentIndex < children.length) {
+        result.add(_makeCalling());
+      }
     }
     return result.cast<Widget>();
   }
 
   /// Elaborate the list
   Widget elaborate() {
-    // Check for empty values
-    if (children.isEmpty) {
-      return Container();
-    }
-
     // Call the first function in the list.
-    // Than should be work in cascade as inside the function we expect
-    // will be called the "_next" function recursively for each branch.
-    return children[_currentIndex](_next);
+    // after the next calling should be work in cascade because inside the
+    // next function we expect to be called the "_next" function recursively
+    // for each branch.
+    return _makeCalling();
   }
 }

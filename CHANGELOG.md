@@ -1,3 +1,8 @@
+## 1.0.0
+
+* Removed deprecated constructor
+* Added throwRangeException parameter to Queue constructor
+
 ## 0.0.7
 
 * Return a single Widget only if `take` param is null else return an array of Widgets.
