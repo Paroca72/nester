@@ -17,7 +17,7 @@ A beautifier plugin to easing your code syntax.
 
 ```
 dependencies:
-  nester: ^1.1.0
+  nester: ^1.1.1
 ```
 
 - Import the package
@@ -152,6 +152,8 @@ This is useful when you using "multi-child" Widgets inside your list.
     ]);
 ```
 
+**Skip and Take**
+
 The `next({int skip, int take})` function accept two parameters.
 * Param `skip` will skip n calls on the queue list. Note that the
 function wil NOT check for nested calling, just skip the next n items
@@ -159,8 +161,15 @@ inside the list. `skip` will be always applied before `take`.
 * Param `take` will consuming n items on the same level. If a item have a
 nested calling will not count as consumed. The result will be an array of
 Widgets.
-* if `skip` is not null and `take` is null an empty Container
+
+
+**Constraints**
+
+* if `skip` and `take` are less than 0 will be considered 0
+* if `skip` is not null or 0 and `take` is null an empty Container
 will be returned.
+
+**Throw Range Exception**
 
 The `queue` constructor accept `throwRangeException` (default:
 `false`) to avoid the RangeError check.
@@ -187,11 +196,29 @@ inside a `Column` widget.
       ...,
      (next) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              next(skip: trigger ? 0: 2),
+              next(),
+              next(),
+            ]),
+      (next) => Padding(..., child: next()),
+      (_) => const Text("If trigger true"),
+      (_) => const Text("Always show"),
+      (_) => const Text("Always show"),
+    ]);
+```
+
+**OR**
+
+```dart
+    return Nester.queue([
+      ...,
+     (next) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: []
               ..addAll(next(skip: trigger ? 0: 2, take: trigger ? 1: 0))
-              ..add(next()),
-              ..add(next()),
-            ]),
+              ..addAll(next(take: 2)),
+            ),
       (next) => Padding(..., child: next()),
       (_) => const Text("If trigger true"),
       (_) => const Text("Always show"),

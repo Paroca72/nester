@@ -127,12 +127,13 @@ class _Queue {
   /// NOTE that [skip] param will be applied before [take].
   _next({int? skip, int? take}) {
     // Apply skip
-    _currentIndex += skip == null || skip < 0 ? 0 : skip;
+    skip = skip == null || skip < 0 ? 0 : skip;
+    _currentIndex += skip;
 
     // Single case result
     if (take == null) {
       // If [skip] is not null an return a Container
-      if (skip != null) {
+      if (skip > 0) {
         return Container();
       }
 
