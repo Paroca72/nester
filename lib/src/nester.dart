@@ -121,6 +121,9 @@ class _Queue {
   /// nested calling will not count as consumed. The result will be an array of
   /// Widget.
   ///
+  /// If [skip] is not null and [take] is null an empty container will be
+  /// returned.
+  ///
   /// NOTE that [skip] param will be applied before [take].
   _next({int? skip, int? take}) {
     // Apply skip
@@ -128,6 +131,11 @@ class _Queue {
 
     // Single case result
     if (take == null) {
+      // If [skip] is not null an return a Container
+      if (skip != null) {
+        return Container();
+      }
+
       // Increment before calling
       _currentIndex++;
       return _makeCalling();

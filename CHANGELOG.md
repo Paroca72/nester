@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Update `skip` and `take` parameters logic.
+* 
 ## 1.0.0
 
 * Removed deprecated constructor

@@ -17,7 +17,7 @@ A beautifier plugin to easing your code syntax.
 
 ```
 dependencies:
-  nester: ^1.0.0
+  nester: ^1.1.0
 ```
 
 - Import the package
@@ -159,15 +159,16 @@ inside the list. `skip` will be always applied before `take`.
 * Param `take` will consuming n items on the same level. If a item have a
 nested calling will not count as consumed. The result will be an array of
 Widgets.
-
+* if `skip` is not null and `take` is null an empty Container
+will be returned.
 
 The `queue` constructor accept `throwRangeException` (default:
 `false`) to avoid the RangeError check.
 If `true` every calling of `next` then exceed the list boundaries will
 throw a `RangeError` exception.
 
-When use `take` param in the `next` call the resulting array will
-not exceed the number of remaining items in list.
+When use `take` param the resulting array will not exceed the number of
+remaining items in list.
 When NOT use `take` and the `next` calling exceed the list bounds an
 empty `Container` will be returned.
 
