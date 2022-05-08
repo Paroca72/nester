@@ -1,3 +1,7 @@
+## 1.2.1
+
+* Reformatting source code
+
 ## 1.2.0
 
 * New `extended` constructor

@@ -39,10 +39,10 @@ class Nester extends StatelessWidget {
   /// Manage the widgets list like a queue but add some extended function to
   /// the next calling function.
   Nester.extended(
-      List<_ExtendedNextCalling> children, {
-        Key? key,
-        this.throwRangeException = false,
-      })  : type = _NesterTypes.extended,
+    List<_ExtendedNextCalling> children, {
+    Key? key,
+    this.throwRangeException = false,
+  })  : type = _NesterTypes.extended,
         children = children.toList(),
         super(key: key);
 

@@ -17,7 +17,7 @@ A beautifier plugin to easing your code syntax.
 
 ```
 dependencies:
-  nester: ^1.2.0
+  nester: ^1.2.1
 ```
 
 - Import the package
@@ -239,12 +239,12 @@ mean consuming the next `Padding` then will consume the next `Text`
 
 **Why addAll?**  
 Because when you use `take` parameter the result will be always an
-Array of Widgets, even if the taking is 0 or 1.
+Array of Widgets, also if taking is 0 or 1.
 
 ---
 
 #### NESTER EXTENDED
-And extension of **Queue**.  
+A extension of **Queue**.  
 Will be treated exactly like `queue` but extended it adding an extra
 param in the `next` function than will allow to pass a `dynamic` value
 to the next calling.
