@@ -1,3 +1,7 @@
+## 1.2.0
+
+* New `extended` constructor
+
 ## 1.1.1
 
 * Better coding
@@ -20,7 +24,7 @@
 
 * Code formatting
 * Review comments and documentation
-* 
+
 ## 0.0.5
 
 * Improved "next" function

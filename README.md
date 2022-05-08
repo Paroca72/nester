@@ -17,7 +17,7 @@ A beautifier plugin to easing your code syntax.
 
 ```
 dependencies:
-  nester: ^1.1.1
+  nester: ^1.2.0
 ```
 
 - Import the package
@@ -240,3 +240,37 @@ mean consuming the next `Padding` then will consume the next `Text`
 **Why addAll?**  
 Because when you use `take` parameter the result will be always an
 Array of Widgets, even if the taking is 0 or 1.
+
+---
+
+#### NESTER EXTENDED
+And extension of **Queue**.  
+Will be treated exactly like `queue` but extended it adding an extra
+param in the `next` function than will allow to pass a `dynamic` value
+to the next calling.
+
+```dart
+    return Nester.extended([
+      (next, _) => MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(primarySwatch: Colors.blue),
+            home: next(),
+          ),
+      (next, _) => Scaffold(
+            appBar: next(param: "Example") as PreferredSizeWidget,
+            body: next(),
+          ),
+      (_, title) => AppBar(title: Text(title)),
+      (next, _) => Padding(
+            padding: const EdgeInsets.all(50),
+            child: next(),
+          ),
+      (next, _) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: next(take: 3, param: ["Left", "Center", "Right"]),
+          ),
+      (_, param) => Text(param[0], textAlign: TextAlign.left),
+      (_, param) => Text(param[1], textAlign: TextAlign.center),
+      (_, param) => Text(param[2], textAlign: TextAlign.right),
+    ]);
+```

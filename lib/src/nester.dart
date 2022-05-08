@@ -18,7 +18,7 @@ class Nester extends StatelessWidget {
 
   /// Force to use a list of widgets
   Nester.list(
-    List<Widget Function(Widget)> children, {
+    List<_ListNextCalling> children, {
     Key? key,
     this.throwRangeException = false,
   })  : type = _NesterTypes.list,
@@ -29,10 +29,20 @@ class Nester extends StatelessWidget {
   /// Each time will be called the passed function will be consumed a child
   /// inside the queue.
   Nester.queue(
-    List<Widget Function(Function({int? skip, int? take}))> children, {
+    List<_QueueNextCalling> children, {
     Key? key,
     this.throwRangeException = false,
   })  : type = _NesterTypes.queue,
+        children = children.toList(),
+        super(key: key);
+
+  /// Manage the widgets list like a queue but add some extended function to
+  /// the next calling function.
+  Nester.extended(
+      List<_ExtendedNextCalling> children, {
+        Key? key,
+        this.throwRangeException = false,
+      })  : type = _NesterTypes.extended,
         children = children.toList(),
         super(key: key);
 
@@ -40,11 +50,18 @@ class Nester extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (type) {
       case _NesterTypes.list:
-        return _List(children as List<Widget Function(Widget)>).elaborate();
+        return _List(
+          children: children as List<_ListNextCalling>,
+        ).elaborate();
       case _NesterTypes.queue:
         return _Queue(
-          children as List<Widget Function(Function({int? skip, int? take}))>,
-          throwRangeException,
+          children: children as List<_QueueNextCalling>,
+          throwRangeException: throwRangeException,
+        ).elaborate();
+      case _NesterTypes.extended:
+        return _Queue(
+          childrenExtended: children as List<_ExtendedNextCalling>,
+          throwRangeException: throwRangeException,
         ).elaborate();
     }
   }
@@ -54,18 +71,29 @@ class Nester extends StatelessWidget {
 enum _NesterTypes {
   list,
   queue,
+  extended,
 }
 
-/// Define the generic use of nester.
+/// Define the function call type for <list>
+typedef _ListNextCalling = Widget Function(Widget);
+
+/// Define the function call type for <queue>
+typedef _QueueNextCalling = Widget Function(Function({int? skip, int? take}));
+
+/// Define the function call type for <queue>
+typedef _ExtendedNextCalling = Widget Function(
+    Function({int? skip, int? take, dynamic param}), dynamic param);
+
+/// The generic use of nester.
 ///
 /// The children will be just a list Widget and every "next" will be in row
 /// of the list at the next position.
 class _List {
   /// The original children list
-  final List<Widget Function(Widget)> children;
+  final List<_ListNextCalling> children;
 
   /// Requested fields
-  _List(this.children);
+  _List({required this.children});
 
   /// Elaborate the list
   Widget elaborate() {
@@ -81,7 +109,7 @@ class _List {
   }
 }
 
-/// Define the queue use of nester.
+/// Queue use of nester.
 ///
 /// The children will be just a list Widget and every "next" will be consuming
 /// the next position in the list.
@@ -89,26 +117,48 @@ class _List {
 /// starting from the last.
 class _Queue {
   /// The original children list
-  final List<Widget Function(Function({int? skip, int? take}))> children;
+  final List<_QueueNextCalling>? children;
+
+  /// The extended children list.
+  /// Will add the behavior to pass a parameter to the next call.
+  final List<_ExtendedNextCalling>? childrenExtended;
 
   /// Define if need to throw ErrorRange exception
   final bool throwRangeException;
 
   /// Requested fields
-  _Queue(this.children, this.throwRangeException);
+  _Queue({
+    this.children,
+    this.childrenExtended,
+    this.throwRangeException = false,
+  });
 
   /// The current position in list
   int _currentIndex = 0;
 
+  /// Get the list length.
+  /// One of two list (children and childrenExtended) must be not null.
+  int _getLength() {
+    if (children != null) return children!.length;
+    if (childrenExtended != null) return childrenExtended!.length;
+    return 0;
+  }
+
   /// Make the calling to the next function in the list
-  _makeCalling() {
+  _makeCalling(dynamic param) {
     // If over the bounds return an empty Container
-    if (!throwRangeException && _currentIndex > children.length - 1) {
+    if (!throwRangeException && _currentIndex > _getLength() - 1) {
       return Container();
     }
 
     // Call the next item in list
-    return children[_currentIndex](_next);
+    /// One of two list (children and childrenExtended) must be not null.
+    if (children != null) {
+      return children![_currentIndex](_next);
+    }
+    if (childrenExtended != null) {
+      return childrenExtended![_currentIndex](_next, param);
+    }
   }
 
   /// This will call the next Widget in the tree
@@ -121,11 +171,12 @@ class _Queue {
   /// nested calling will not count as consumed. The result will be an array of
   /// Widget.
   ///
-  /// If [skip] is not null and [take] is null an empty container will be
-  /// returned.
+  /// Param [param] will passed to next calling as parameter.
   ///
-  /// NOTE that [skip] param will be applied before [take].
-  _next({int? skip, int? take}) {
+  /// NOTE: If [skip] is not null and [take] is null an empty container will be
+  /// returned.
+  /// that [skip] param will be applied before [take].
+  _next({int? skip, int? take, dynamic param}) {
     // Apply skip
     skip = skip == null || skip < 0 ? 0 : skip;
     _currentIndex += skip;
@@ -139,7 +190,7 @@ class _Queue {
 
       // Increment before calling
       _currentIndex++;
-      return _makeCalling();
+      return _makeCalling(param);
     }
 
     // Multi case result
@@ -149,8 +200,8 @@ class _Queue {
       _currentIndex++;
 
       // Avoid range error if required
-      if (throwRangeException || _currentIndex < children.length) {
-        result.add(_makeCalling());
+      if (throwRangeException || _currentIndex < _getLength()) {
+        result.add(_makeCalling(param));
       }
     }
     return result.cast<Widget>();
@@ -162,6 +213,6 @@ class _Queue {
     // after the next calling should be work in cascade because inside the
     // next function we expect to be called the "_next" function recursively
     // for each branch.
-    return _makeCalling();
+    return _makeCalling(null);
   }
 }
